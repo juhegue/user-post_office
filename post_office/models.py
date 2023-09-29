@@ -10,6 +10,7 @@ from django.db import models
 from django.utils.encoding import smart_str
 from django.utils.translation import pgettext_lazy, gettext_lazy as _
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 from post_office import cache
 from post_office.fields import CommaSeparatedEmailField
@@ -74,6 +75,7 @@ class Email(models.Model):
     context = context_field_class(_('Context'), blank=True, null=True)
     backend_alias = models.CharField(_("Backend alias"), blank=True, default='',
                                      max_length=64)
+    user_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
         app_label = 'post_office'
@@ -117,6 +119,7 @@ class Email(models.Model):
             multipart_template = None
             html_message = self.html_message
 
+        connections.user_id = self.user_id
         connection = connections[self.backend_alias or 'default']
         if isinstance(self.headers, dict) or self.expires_at or self.message_id:
             headers = dict(self.headers or {})

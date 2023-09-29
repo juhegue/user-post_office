@@ -28,7 +28,7 @@ class ConnectionHandler:
         except KeyError:
             raise KeyError('%s is not a valid backend alias' % alias)
 
-        connection = get_connection(backend)
+        connection = get_connection(backend, user_id=self.user_id)
         connection.open()
         self._connections.connections[alias] = connection
         return connection

@@ -34,7 +34,7 @@ TESTS_REQUIRE = ['tox >= 2.3']
 
 
 setup(
-    name='django-post_office',
+    name='user-post_office',
     version=VERSION,
     author='Selwin Ong',
     author_email='selwin.ong@gmail.com',
