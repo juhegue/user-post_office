@@ -16,8 +16,10 @@ class ConnectionHandler:
         self._connections = local()
 
     def __getitem__(self, alias):
+        alias, user_id = alias
+        name = f'{alias}_{user_id}'
         try:
-            return self._connections.connections[alias]
+            return self._connections.connections[name]
         except AttributeError:
             self._connections.connections = {}
         except KeyError:
@@ -28,9 +30,9 @@ class ConnectionHandler:
         except KeyError:
             raise KeyError('%s is not a valid backend alias' % alias)
 
-        connection = get_connection(backend, user_id=self.user_id)
+        connection = get_connection(backend, user_id=user_id)
         connection.open()
-        self._connections.connections[alias] = connection
+        self._connections.connections[name] = connection
         return connection
 
     def all(self):

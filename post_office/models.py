@@ -119,8 +119,7 @@ class Email(models.Model):
             multipart_template = None
             html_message = self.html_message
 
-        connections.user_id = self.user_id
-        connection = connections[self.backend_alias or 'default']
+        connection = connections[(self.backend_alias or 'default', self.user_id)]
         if isinstance(self.headers, dict) or self.expires_at or self.message_id:
             headers = dict(self.headers or {})
             if self.expires_at:
