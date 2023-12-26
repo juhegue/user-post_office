@@ -157,27 +157,30 @@ class EmailAdmin(admin.ModelAdmin):
             fields.insert(0, 'message_id')
         fieldsets = [(None, {'fields': fields})]
         has_plaintext_content, has_html_content = False, False
-        for part in obj.email_message().message().walk():
-            if not isinstance(part, SafeMIMEText):
-                continue
-            content_type = part.get_content_type()
-            if content_type == 'text/plain':
-                has_plaintext_content = True
-            elif content_type == 'text/html':
-                has_html_content = True
+        try:
+            for part in obj.email_message().message().walk():
+                if not isinstance(part, SafeMIMEText):
+                    continue
+                content_type = part.get_content_type()
+                if content_type == 'text/plain':
+                    has_plaintext_content = True
+                elif content_type == 'text/html':
+                    has_html_content = True
 
-        if has_html_content:
-            fieldsets.append(
-                (_("HTML Email"), {'fields': ['render_subject', 'render_html_body']})
-            )
-            if has_plaintext_content:
+            if has_html_content:
                 fieldsets.append(
-                    (_("Text Email"), {'classes': ['collapse'], 'fields': ['render_plaintext_body']})
+                    (_("HTML Email"), {'fields': ['render_subject', 'render_html_body']})
                 )
-        elif has_plaintext_content:
-            fieldsets.append(
-                (_("Text Email"), {'fields': ['render_subject', 'render_plaintext_body']})
-             )
+                if has_plaintext_content:
+                    fieldsets.append(
+                        (_("Text Email"), {'classes': ['collapse'], 'fields': ['render_plaintext_body']})
+                    )
+            elif has_plaintext_content:
+                fieldsets.append(
+                    (_("Text Email"), {'fields': ['render_subject', 'render_plaintext_body']})
+                 )
+        except:
+            ...
 
         return fieldsets
 
